@@ -5,14 +5,17 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { LoginDto } from 'src/users/dto/login.dto';
 import { UsersService } from 'src/users/users.service';
 import { Response } from 'express';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-
+@ApiTags('유저 API')
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService,
         private readonly usersService:UsersService
     ) {}
 
+    @ApiOperation({summary :'로그인 API'})
+    @ApiBody({type : LoginDto})
     @Post('login')
     async login(@Body() loginDto: LoginDto, @Res() res: Response) {
 
@@ -34,7 +37,8 @@ export class AuthController {
         return res.status(HttpStatus.OK).json({ message: '로그인에 성공하였습니다.' });
     }
     
-
+    @ApiOperation({summary :'회원가입 API'})
+    @ApiBody({type : CreateUserDto})
     @Post('signup')
     async signUp(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
         const existingUser = await this.usersService.findOne(createUserDto.loginId);
@@ -50,6 +54,8 @@ export class AuthController {
         }
     }
 
+    @ApiBearerAuth('Authorization')
+    @ApiOperation({summary :'로그아웃 API'})
     @UseGuards(JwtAuthGuard)
     @Post('logout')
     async logout(@Res() res: Response) {
@@ -62,7 +68,9 @@ export class AuthController {
         
         return res.status(HttpStatus.OK).json({ message: '로그아웃에 성공하였습니다.' });
     }
-
+    
+    @ApiBearerAuth('Authorization')
+    @ApiOperation({summary :'회원 탈퇴 API'})
     @UseGuards(JwtAuthGuard)
     @Delete()
     async deleteUser(@Request() req) {
@@ -76,12 +84,5 @@ export class AuthController {
         } catch (error) {
             throw new HttpException('회원 탈퇴 처리 중 문제가 발생했습니다.', HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-
-    @UseGuards(JwtAuthGuard)
-    @Get('profile')
-    getProfile(@Request() req){
-        return req.user;
     }
 }
