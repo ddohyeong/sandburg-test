@@ -9,4 +9,4 @@ import { Board } from './entity/board.entity';
   controllers: [BoardController],
   providers: [BoardService]
 })
-export class BoardModule {}
+export class BoardModule { }

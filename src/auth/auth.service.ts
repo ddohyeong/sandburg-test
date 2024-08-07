@@ -11,13 +11,13 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   async validateUser(loginId: string, password: string): Promise<any> {
     const user = await this.usersService.findOne(loginId);
 
-     // 사용자가 삭제되었는지 확인
-     if (!user || user.deleted) {
+    // 사용자가 삭제되었는지 확인
+    if (!user || user.deleted) {
       throw new UnauthorizedException('사용자가 존재하지 않거나 비활성화된 계정입니다.');
     }
 
@@ -31,7 +31,7 @@ export class AuthService {
 
   async login(user: any) {
     const payload = { loginId: user.loginId, sub: user.id, role: user.role };
-    
+
     await this.usersService.updateLoginDate(user.id);
 
     return {

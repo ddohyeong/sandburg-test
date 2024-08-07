@@ -23,7 +23,7 @@ import { Board } from './board/entity/board.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User,Board],
+      entities: [User, Board],
       synchronize: Boolean(process.env.DB_SYNC),
     }),
     AuthModule,
@@ -33,4 +33,4 @@ import { Board } from './board/entity/board.entity';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

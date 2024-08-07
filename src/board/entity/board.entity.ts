@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateCol
 import { BoardType } from "./type.enum";
 
 @Entity()
-export class Board{
+export class Board {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -12,7 +12,7 @@ export class Board{
     @Column('text')
     content: string;
 
-    @Column({nullable : false})
+    @Column({ nullable: false })
     userId: number;
 
     @CreateDateColumn()
@@ -24,7 +24,7 @@ export class Board{
     @Column({
         type: 'enum',
         enum: BoardType,
-        default : BoardType.FREE
+        default: BoardType.FREE
     })
     type: BoardType
 }

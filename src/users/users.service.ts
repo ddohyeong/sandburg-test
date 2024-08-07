@@ -10,7 +10,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-  ) {}
+  ) { }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const { loginId, password, email } = createUserDto;
@@ -26,11 +26,11 @@ export class UsersService {
     return this.usersRepository.save(user);
   }
 
-  async findOne(loginId: string): Promise< User | undefined> {
+  async findOne(loginId: string): Promise<User | undefined> {
     return this.usersRepository.findOne({ where: { loginId } });
   }
 
-  async findOneById(id : number): Promise< User | undefined> {
+  async findOneById(id: number): Promise<User | undefined> {
     return this.usersRepository.findOne({ where: { id } });
   }
 
