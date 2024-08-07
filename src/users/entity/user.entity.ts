@@ -7,7 +7,7 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({unique: true, type: 'varchar', length: 20})
+  @Column({ unique: true, type: 'varchar', length: 20 })
   loginId: string;
 
   @Column()
@@ -26,9 +26,9 @@ export class User {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' ,nullable : true})
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', nullable: true })
   loginDate: Date;
 
-  @Column({default:false})
-  deleted : boolean;
+  @Column({ default: false })
+  deleted: boolean;
 }

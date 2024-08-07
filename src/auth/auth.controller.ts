@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Request, UseGuards, UnauthorizedException, Get, BadRequestException, Res, HttpStatus, Delete, HttpException} from '@nestjs/common';
+import { Controller, Post, Body, Request, UseGuards, UnauthorizedException, Get, BadRequestException, Res, HttpStatus, Delete, HttpException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/users/dto/create.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
@@ -11,16 +11,16 @@ import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService,
-        private readonly usersService:UsersService
-    ) {}
+        private readonly usersService: UsersService
+    ) { }
 
-    @ApiOperation({summary :'로그인 API'})
-    @ApiBody({type : LoginDto})
+    @ApiOperation({ summary: '로그인 API' })
+    @ApiBody({ type: LoginDto })
     @Post('login')
     async login(@Body() loginDto: LoginDto, @Res() res: Response) {
 
         const user = await this.authService.validateUser(loginDto.loginId, loginDto.password);
-        
+
         if (!user) {
             throw new UnauthorizedException('로그인에 실패했습니다.');
         }
@@ -33,29 +33,29 @@ export class AuthController {
             sameSite: 'strict', // CSRF 공격 방지
             maxAge: 60 * 60 * 1000, // 쿠키의 만료 시간 (1시간)
         })
-        
+
         return res.status(HttpStatus.OK).json({ message: '로그인에 성공하였습니다.' });
     }
-    
-    @ApiOperation({summary :'회원가입 API'})
-    @ApiBody({type : CreateUserDto})
+
+    @ApiOperation({ summary: '회원가입 API' })
+    @ApiBody({ type: CreateUserDto })
     @Post('signup')
     async signUp(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
         const existingUser = await this.usersService.findOne(createUserDto.loginId);
         if (existingUser) {
             throw new BadRequestException('이미 사용중인 회원아이디 입니다.');
         }
-        try{
+        try {
             this.authService.signUp(createUserDto)
             return res.status(HttpStatus.OK).json({ message: '회원 가입이 완료되었습니다.' });
 
-        }catch(error){
+        } catch (error) {
             throw new BadRequestException('회원가입에 실패하였습니다.');
         }
     }
 
     @ApiBearerAuth('Authorization')
-    @ApiOperation({summary :'로그아웃 API'})
+    @ApiOperation({ summary: '로그아웃 API' })
     @UseGuards(JwtAuthGuard)
     @Post('logout')
     async logout(@Res() res: Response) {
@@ -65,21 +65,21 @@ export class AuthController {
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
         });
-        
+
         return res.status(HttpStatus.OK).json({ message: '로그아웃에 성공하였습니다.' });
     }
-    
+
     @ApiBearerAuth('Authorization')
-    @ApiOperation({summary :'회원 탈퇴 API'})
+    @ApiOperation({ summary: '회원 탈퇴 API' })
     @UseGuards(JwtAuthGuard)
     @Delete()
     async deleteUser(@Request() req) {
-        const userId = req.user.id; 
+        const userId = req.user.id;
         // console.log(userId);
-        
+
         try {
             await this.usersService.deleteUser(userId);
-            
+
             return { message: '회원 탈퇴가 성공적으로 처리되었습니다.' };
         } catch (error) {
             throw new HttpException('회원 탈퇴 처리 중 문제가 발생했습니다.', HttpStatus.INTERNAL_SERVER_ERROR);

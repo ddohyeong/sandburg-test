@@ -16,7 +16,7 @@ async function bootstrap() {
     allowedHeaders: 'Content-Type, Accept, Authorization',
   });
 
-  
+
   const port = process.env.PORT || 8000;
   app.useGlobalPipes(new ValidationPipe());
 
