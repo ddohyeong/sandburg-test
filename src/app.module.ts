@@ -6,6 +6,8 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { User } from './users/entity/user.entity';
 import { AuthModule } from './auth/auth.module';
+import { BoardModule } from './board/board.module';
+import { Board } from './board/entity/board.entity';
 
 
 
@@ -21,11 +23,12 @@ import { AuthModule } from './auth/auth.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User],
+      entities: [User,Board],
       synchronize: Boolean(process.env.DB_SYNC),
     }),
     AuthModule,
     UsersModule,
+    BoardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

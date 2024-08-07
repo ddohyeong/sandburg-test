@@ -30,6 +30,9 @@ export class UsersService {
     return this.usersRepository.findOne({ where: { loginId } });
   }
 
+  async findOneById(id : number): Promise< User | undefined> {
+    return this.usersRepository.findOne({ where: { id } });
+  }
 
   async updateLoginDate(userId: number): Promise<void> {
     // 로그인 시각 업데이트
