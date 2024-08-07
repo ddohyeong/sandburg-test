@@ -1,10 +1,11 @@
-import { Body, Controller, Delete, ForbiddenException, HttpException, HttpStatus, InternalServerErrorException, NotFoundException, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Patch, Post, Query, Request, UseGuards } from '@nestjs/common';
 import { BoardService } from './board.service';
 import { CreateBoardDto } from './dto/create.dto';
 import { Board } from './entity/board.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { UpdateBoardDto } from './dto/update.dto';
 import { DeleteBoardDto } from './dto/delete.dto';
+import { SearchBoardDto } from './dto/search.dto';
 
 @Controller('board')
 export class BoardController {
@@ -34,4 +35,17 @@ export class BoardController {
         await this.boardService.deleteBoard(deleteBoardDto, user);
         return { message: '선택한 게시글이 삭제되었습니다.' };
     }
+
+    @Get()
+    async searchBoards(@Query() searchBoardDto: SearchBoardDto): Promise<{ boards: Board[]; total: number; page: number; limit: number }> {
+        const { boards, total } = await this.boardService.searchBoards(searchBoardDto);
+        const { page, limit } = searchBoardDto;
+        return {
+            boards,
+            total,
+            page,
+            limit,
+        };
+    }    
 }
+

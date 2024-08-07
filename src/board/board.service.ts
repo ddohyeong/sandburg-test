@@ -8,6 +8,7 @@ import { BoardType } from './entity/type.enum';
 import { User } from 'src/users/entity/user.entity';
 import { UpdateBoardDto } from './dto/update.dto';
 import { DeleteBoardDto } from './dto/delete.dto';
+import { SearchBoardDto } from './dto/search.dto';
 
 @Injectable()
 export class BoardService {
@@ -75,7 +76,41 @@ export class BoardService {
     }
     
 
-    // 게시글 조회
+
+    async searchBoards(searchBoardDto : SearchBoardDto) :Promise<{ boards: Board[]; total: number }>{
+        const { title, loginId, type, page, limit } = searchBoardDto;
+
+        // QueryBuilder를 사용하여 동적 쿼리 생성
+        const query = this.boardRepository.createQueryBuilder('board');
+    
+        if (title) {
+            query.andWhere('board.title LIKE :title', { title: `%${title}%` });
+        }
+    
+        if (loginId) {
+            query.innerJoin('user', 'user', 'user.id = board.userId')
+            .andWhere('user.loginId = :loginId', { loginId });
+        }
+    
+        if (type) {
+            query.andWhere('board.type = :type', { type });
+        }
+        
+        let skip = (page - 1) * limit; // 스킵할 항목 수
+        if (Number.isNaN(skip)){
+            skip = 0;
+        }
+
+        const [boards, total] = await query
+        .skip(skip) // 몇 개의 결과를 스킵할지 설정
+        .take(limit) // 몇 개의 결과를 가져올지 설정
+        .getManyAndCount(); // 결과 및 총 개수 반환
+
+        return { boards, total };
+    }
+
+
+    // DB 조회
     private async findBoardById(id: number): Promise<Board> {
         const board = await this.boardRepository.findOne({ where: { id } });
         if (!board) {
